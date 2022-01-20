@@ -15,9 +15,8 @@ filling_color = (0, 0, 0)
 bright = 100
 roof = False
 
-
-# def poster(x, y, h, z):
-#     print(POSTERS)
+im = pg.transform.scale(pg.image.load('posters/matrix.jpg'), (100, 200))
+im = pg.surfarray.array3d(im)
 
 
 @njit(fastmath=True)
@@ -25,7 +24,6 @@ def ray_casting(screen_array, player_pos, player_angle, player_height, player_pi
                 screen_width, screen_height, delta_angle, ray_distance, h_fov, scale_height):
     screen_array[:] = np.array(filling_color)
     y_buffer = np.full(screen_width, screen_height)
-    posters = []
 
     ray_angle = player_angle - h_fov
     for num_ray in range(screen_width):
@@ -60,11 +58,13 @@ def ray_casting(screen_array, player_pos, player_angle, player_height, player_pi
                         bright_proc = bright / 100 * (ray_distance - depth) / ray_distance
                         for screen_y in range(height_on_screen, y_buffer[num_ray]):
                             r, g, b = color_map[x, y]
+                            if x in range(30, 30 + 100 // 2):
+                                if 200 > height_map[x, y][0] > 50:
+                                    r, g, b = im[(x - 30) * 2, int((screen_y - height_on_screen) * (depth / 500))]
                             r *= bright_proc
                             g *= bright_proc
                             b *= bright_proc
                             screen_array[num_ray, screen_y] = (int(r), int(g), int(b))
-                        posters.append((x, y, height_on_screen, y_buffer[num_ray], num_ray, bright_proc))
 
                         # подойдёт для создания пыли
                         # if dust and screen_y == height_on_screen:
@@ -73,42 +73,6 @@ def ray_casting(screen_array, player_pos, player_angle, player_height, player_pi
                         y_buffer[num_ray] = height_on_screen
 
         ray_angle += delta_angle
-    return screen_array, posters
-
-
-def poster_render(screen_array, posters, poster_cords, player_height):
-    for poster in posters:
-        poster.flag = True
-        for i in poster_cords:
-            x, y, height_on_screen, y_buffer, num_ray, bright_proc = i
-            if poster.flag and (
-                    poster.z == 'x' and y == poster.y and x in range(poster.x, poster.x + poster.size[0])) or \
-                    (poster.z == 'y' and x == poster.x and y in range(poster.y, poster.y + poster.size[0])):
-                if poster.z == 'x':
-                    for x1 in range(num_ray, num_ray + poster.size[0]):
-                        if 0 <= x1 - x < 800:
-                            for h1 in range(poster.h - poster.size[1], poster.h):
-                                if 450 > height_on_screen - abs(h1 - poster.size[1]) + height_map[x, y][0] >= 0:
-                                    r, g, b = poster.image[x1 - num_ray - 1, h1 - poster.h + 1]
-                                    r *= bright_proc
-                                    g *= bright_proc
-                                    b *= bright_proc
-                                    screen_array[
-                                        x1 - x, height_on_screen - abs(h1 - poster.size[1]) + height_map[x, y][0]] = (
-                                    int(r), int(g), int(b))
-                                    poster.flag = False
-                                    # for screen_y in range(height_on_screen, y_buffer):
-                                    #     print(player_height, y_buffer)
-                                    #     height = map_height - screen_y
-                                    #     if height in range(poster.h - poster.size[1], poster.h):
-                                    #         if poster.z == 'x':
-                                    #             r, g, b = poster.image[x - poster.x, abs(height - poster.h)]
-                                    #         else:
-                                    #             r, g, b = poster.image[y - poster.y, abs(height - poster.h)]
-                                    #         r *= bright_proc
-                                    #         g *= bright_proc
-                                    #         b *= bright_proc
-                                    #         screen_array[num_ray, screen_y] = (int(r), int(g), int(b))
     return screen_array
 
 
@@ -125,17 +89,15 @@ class VoxelRender:
         self.screen_array = np.full((800, 450, 3), (0, 0, 0))
 
     def update(self):
-        self.screen_array, posters = ray_casting(self.screen_array, self.player.pos, self.player.angle,
-                                                 self.player.height, self.player.pitch, 800,
-                                                 450, self.delta_angle, self.ray_distance,
-                                                 self.h_fov, self.scale_height)
-        if self.app.posters:
-            self.screen_array = poster_render(self.screen_array, self.app.posters, posters, self.player.height)
+        self.screen_array = ray_casting(self.screen_array, self.player.pos, self.player.angle,
+                                        self.player.height, self.player.pitch, 800,
+                                        450, self.delta_angle, self.ray_distance,
+                                        self.h_fov, self.scale_height)
 
     def draw(self):
         screen = pg.surfarray.make_surface(self.screen_array)
         h = self.app.height
-        w = int(h // 4.5 * 8)
+        w = round(h // 450 * 1200)
         screen = pg.transform.scale(screen, (w, h))
         # screen = pg.transform.rotate(screen, 5 * self.player.move)
 

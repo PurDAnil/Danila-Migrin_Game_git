@@ -1,1 +1,0 @@
-print("It's main.py")
