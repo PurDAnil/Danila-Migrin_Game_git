@@ -2,6 +2,8 @@ import pygame as pg
 
 
 class Poster:
+    # 30, 20
+    # 30, 970
     def __init__(self, app, image, p_width, p_height, x, y, h, z):
         # z - либо х, либо у. Если х, то по х кординате и наоборот.
         self.flag = True

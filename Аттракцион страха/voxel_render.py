@@ -2,6 +2,7 @@ import pygame as pg
 from numba import njit
 import numpy as np
 import math
+import os
 
 height_map_img = pg.image.load('maps/test/height_map.jpg')
 height_map = pg.surfarray.array3d(height_map_img)
@@ -15,8 +16,9 @@ filling_color = (0, 0, 0)
 bright = 100
 roof = False
 
-im = pg.transform.scale(pg.image.load('posters/matrix.jpg'), (100, 200))
-im = pg.surfarray.array3d(im)
+for image in os.listdir('posters'):
+    im = pg.transform.scale(pg.image.load('posters/' + image), (100, 200))
+    globals()[image.split('.')[0]] = pg.surfarray.array3d(im)
 
 
 @njit(fastmath=True)
@@ -58,9 +60,9 @@ def ray_casting(screen_array, player_pos, player_angle, player_height, player_pi
                         bright_proc = bright / 100 * (ray_distance - depth) / ray_distance
                         for screen_y in range(height_on_screen, y_buffer[num_ray]):
                             r, g, b = color_map[x, y]
-                            if x in range(30, 30 + 100 // 2):
-                                if 200 > height_map[x, y][0] > 50:
-                                    r, g, b = im[(x - 30) * 2, int((screen_y - height_on_screen) * (depth / 500))]
+                            if x in range(30, 30 + 100 // 2) and y in range(900 - 10, 900 + 80):
+                                if 300 < int(height_map[x, y][0] - (screen_y - player_pitch) * (depth / 500)) + player_height * 2 < 600:
+                                    r, g, b = fnaf_poster[(x - 30) * 2 + 1, int(((screen_y - player_pitch) * (depth / 500)) - player_height * 2 - 17)]
                             r *= bright_proc
                             g *= bright_proc
                             b *= bright_proc
