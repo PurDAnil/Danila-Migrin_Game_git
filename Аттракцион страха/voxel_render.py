@@ -124,7 +124,7 @@ class VoxelRender:
     def draw(self):
         screen = pg.surfarray.make_surface(self.screen_array)
         h = self.app.height
-        w = round(h // 450 * 1200)
+        w = h // 450 * 1200
         screen = pg.transform.scale(screen, (w, h))
         # screen = pg.transform.rotate(screen, 5 * self.player.move)
 
