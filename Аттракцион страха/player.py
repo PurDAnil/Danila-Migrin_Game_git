@@ -4,7 +4,8 @@ import math
 
 
 class Player:
-    def __init__(self):
+    def __init__(self, app):
+        self.app = app
         self.pos = np.array([0, 0], dtype=float)
         self.angle = math.pi / 4
         self.height = 400
@@ -13,8 +14,9 @@ class Player:
         self.vel = 5
         self.move = 0
         self.cof = 0.04
+        self.camera = True
 
-    def update(self):
+    def update_god(self):
         sin_a = math.sin(self.angle)
         cos_a = math.cos(self.angle)
 
@@ -66,3 +68,9 @@ class Player:
             self.height -= 10
             if self.height < 40:
                 self.height = 40
+
+        if pressed_key[pg.K_g]:
+            print(self.pitch, self.angle_vel, self.pos, self.height)
+
+    def update(self):
+        pass

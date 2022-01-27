@@ -2,6 +2,7 @@ import pygame as pg
 from player import Player
 from voxel_render import VoxelRender
 from poster import Poster
+from camers import Cam
 
 
 class App:
@@ -18,18 +19,20 @@ class App:
         self.res = self.width, self.height = (w, h)
         self.screen = pg.display.set_mode(self.res)
         self.clock = pg.time.Clock()
-        self.player = Player()
+        self.player = Player(self)
         self.voxel_render = VoxelRender(self)
         self.voxel_render.changes('fnaf', (0, 0, 0), (255, 0, 0))
+        self.cam = Cam(self)
         Poster(self, 30, 25, 'x', 'matrix')
         Poster(self, 20, 900, 'y', 'fnaf_poster')
 
     def update(self):
-        self.player.update()
+        self.player.update_god()
         self.voxel_render.update()
 
     def draw(self):
         self.voxel_render.draw()
+        self.cam.draw()
         pg.display.flip()
 
     def run(self):
