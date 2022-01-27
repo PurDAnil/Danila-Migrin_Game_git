@@ -1,25 +1,9 @@
-import pygame as pg
-
-
 class Poster:
-    # 30, 20
+    # 30, 25
     # 30, 970
-    def __init__(self, app, image, p_width, p_height, x, y, h, z):
-        # z - либо х, либо у. Если х, то по х кординате и наоборот.
-        self.flag = True
-        self.app = app
-        im = pg.transform.scale(pg.image.load('posters/' + image + '.jpg'), (p_width, p_height))
-        self.size = (p_width, p_height)
-        self.image = pg.surfarray.array3d(im)
-        self.x = x
-        self.y = y
-        self.h = h
-        self.z = z
-        app.posters.append(self)
-
-    def update(self):
-        pass
-
-    def draw(self):
-        # self.app.screen.blit(self.image, (0, 0))
-        pass
+    # 20, 900 y
+    def __init__(self, app, x, y, z, image):
+        app.posters[0].append(x)
+        app.posters[1].append(y)
+        app.posters[2].append(z)
+        app.posters[3].append(image)

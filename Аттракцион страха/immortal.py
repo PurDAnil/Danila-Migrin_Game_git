@@ -14,23 +14,22 @@ class App:
             pg.display.set_mode()
             h = pg.display.Info().current_h
             w = pg.display.Info().current_w
+        self.posters = [[], [], [], []]
         self.res = self.width, self.height = (w, h)
         self.screen = pg.display.set_mode(self.res)
         self.clock = pg.time.Clock()
         self.player = Player()
         self.voxel_render = VoxelRender(self)
         self.voxel_render.changes('fnaf', (0, 0, 0), (255, 0, 0))
-        self.posters = []
-        # self.poster = Poster(self, 'matrix', 200, 200, 550, 40, 200, 'x')
+        Poster(self, 30, 25, 'x', 'matrix')
+        Poster(self, 20, 900, 'y', 'fnaf_poster')
 
     def update(self):
         self.player.update()
         self.voxel_render.update()
-        # self.poster.update()
 
     def draw(self):
         self.voxel_render.draw()
-        # self.poster.draw()
         pg.display.flip()
 
     def run(self):

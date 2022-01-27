@@ -16,14 +16,18 @@ filling_color = (0, 0, 0)
 bright = 100
 roof = False
 
+posters_name = []
+posters_image = []
 for image in os.listdir('posters'):
     im = pg.transform.scale(pg.image.load('posters/' + image), (100, 200))
-    globals()[image.split('.')[0]] = pg.surfarray.array3d(im)
+    posters_name.append(image.split('.')[0])
+    posters_image.append(pg.surfarray.array3d(im))
 
 
 @njit(fastmath=True)
 def ray_casting(screen_array, player_pos, player_angle, player_height, player_pitch,
-                screen_width, screen_height, delta_angle, ray_distance, h_fov, scale_height):
+                screen_width, screen_height, delta_angle, ray_distance, h_fov, scale_height,
+                all_posters, all_posters_names, p_x, p_y, p_z, p_im):
     screen_array[:] = np.array(filling_color)
     y_buffer = np.full(screen_width, screen_height)
 
@@ -60,9 +64,28 @@ def ray_casting(screen_array, player_pos, player_angle, player_height, player_pi
                         bright_proc = bright / 100 * (ray_distance - depth) / ray_distance
                         for screen_y in range(height_on_screen, y_buffer[num_ray]):
                             r, g, b = color_map[x, y]
-                            if x in range(30, 30 + 100 // 2) and y in range(900 - 10, 900 + 80):
-                                if 300 < int(height_map[x, y][0] - (screen_y - player_pitch) * (depth / 500)) + player_height * 2 < 600:
-                                    r, g, b = fnaf_poster[(x - 30) * 2 + 1, int(((screen_y - player_pitch) * (depth / 500)) - player_height * 2 - 17)]
+                            # Отрисовка "плакатов" (столько мучений)
+                            for el in range(len(p_x)):
+                                vp_x = p_x[el]
+                                vp_y = p_y[el]
+                                vp_z = p_z[el]
+                                vp_im = p_im[el]
+                                if vp_z == 'x' and x in range(vp_x, vp_x + 50) and y in range(vp_y - 5, vp_y + 5):
+                                    if 300 < int(height_map[x, y][0] - (screen_y - player_pitch) * (depth / 500))\
+                                            + player_height * 2 < 600:
+                                        key = all_posters_names.index(vp_im)
+                                        certain_poster = all_posters[key]
+                                        r, g, b = certain_poster[(x - vp_x) * 2 + 1, int(((screen_y - player_pitch)
+                                                                                          * (depth / 500))
+                                                                                         - player_height * 2 - 17)]
+                                elif vp_z == 'y' and y in range(vp_y, vp_y + 50) and x in range(vp_x - 5, vp_x + 5):
+                                    if 300 < int(height_map[x, y][0] - (screen_y - player_pitch) * (depth / 500))\
+                                            + player_height * 2 < 600:
+                                        key = all_posters_names.index(vp_im)
+                                        certain_poster = all_posters[key]
+                                        r, g, b = certain_poster[(y - vp_y) * 2 + 1, int(((screen_y - player_pitch)
+                                                                                          * (depth / 500))
+                                                                                         - player_height * 2 - 17)]
                             r *= bright_proc
                             g *= bright_proc
                             b *= bright_proc
@@ -91,10 +114,12 @@ class VoxelRender:
         self.screen_array = np.full((800, 450, 3), (0, 0, 0))
 
     def update(self):
+        x, y, z, images = self.app.posters
         self.screen_array = ray_casting(self.screen_array, self.player.pos, self.player.angle,
                                         self.player.height, self.player.pitch, 800,
                                         450, self.delta_angle, self.ray_distance,
-                                        self.h_fov, self.scale_height)
+                                        self.h_fov, self.scale_height, posters_image,
+                                        posters_name, x, y, z, images)
 
     def draw(self):
         screen = pg.surfarray.make_surface(self.screen_array)
