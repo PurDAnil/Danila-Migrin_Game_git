@@ -109,7 +109,7 @@ class VoxelRender:
         self.h_fov = self.fov / 2
         self.num_rays = app.width * 2
         self.delta_angle = self.fov / self.num_rays * 2
-        self.ray_distance = 2000
+        self.ray_distance = 1200
         self.scale_height = 920
         self.screen_array = np.full((800, 450, 3), (0, 0, 0))
 
@@ -124,7 +124,7 @@ class VoxelRender:
     def draw(self):
         screen = pg.surfarray.make_surface(self.screen_array)
         h = self.app.height
-        w = h // 450 * 1200
+        w = h / 450 * 800
         screen = pg.transform.scale(screen, (w, h))
         # screen = pg.transform.rotate(screen, 5 * self.player.move)
 

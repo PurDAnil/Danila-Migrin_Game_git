@@ -3,6 +3,7 @@ from player import Player
 from voxel_render import VoxelRender
 from poster import Poster
 from camers import Cam
+from blitter import Blitter
 
 
 class App:
@@ -15,6 +16,8 @@ class App:
             pg.display.set_mode()
             h = pg.display.Info().current_h
             w = pg.display.Info().current_w
+        pg.display.set_icon(pg.image.load('tech/icon.jpg'))
+        self.blitter = []
         self.posters = [[], [], [], []]
         self.res = self.width, self.height = (w, h)
         self.screen = pg.display.set_mode(self.res)
@@ -29,10 +32,12 @@ class App:
     def update(self):
         self.player.update_god()
         self.voxel_render.update()
+        [i.update() for i in self.blitter]
 
     def draw(self):
         self.voxel_render.draw()
         self.cam.draw()
+        [i.draw() for i in self.blitter]
         pg.display.flip()
 
     def run(self):
@@ -40,7 +45,7 @@ class App:
         running = True
         while running:
             self.screen.fill((0, 0, 0))
-            self.clock.tick(60)
+            self.clock.tick(20)
             pg.display.set_caption(str(self.clock.get_fps()))
             self.update()
             self.draw()

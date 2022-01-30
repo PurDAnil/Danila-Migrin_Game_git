@@ -6,15 +6,15 @@ import math
 class Player:
     def __init__(self, app):
         self.app = app
-        self.pos = np.array([0, 0], dtype=float)
-        self.angle = math.pi / 4
-        self.height = 400
-        self.pitch = 40
+        self.pos = np.array([742, 556], dtype=float)
+        self.angle = 3.9
+        self.height = 300
+        self.pitch = -80
         self.angle_vel = 0.04
         self.vel = 5
         self.move = 0
         self.cof = 0.04
-        self.camera = True
+        self.camera = 1
 
     def update_god(self):
         sin_a = math.sin(self.angle)
@@ -70,7 +70,13 @@ class Player:
                 self.height = 40
 
         if pressed_key[pg.K_g]:
-            print(self.pitch, self.angle_vel, self.pos, self.height)
+            print(self.pitch, self.pos, self.height, self.angle)
+
+        if pressed_key[pg.K_k]:
+            self.camera = 0
+
+        if pressed_key[pg.K_l]:
+            self.camera = 1
 
     def update(self):
         pass
