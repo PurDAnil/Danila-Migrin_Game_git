@@ -5,7 +5,7 @@ pg.font.init()
 
 
 class Blitter:
-    def __init__(self, app, item, pos: list, size: list, show=True, text_size=10, color='white', click=0, ed='-'):
+    def __init__(self, app, item, pos: list, size: list, show=True, text_size=10, color='white', click=0, ed='-', cp=0):
         self.click = click
         self.arg = ed
         self.show_hide = show
@@ -13,6 +13,8 @@ class Blitter:
         self.pos = pos
         self.size = size
         self.app.blitter.append(self)
+        if type(cp) is list:
+            cp.append(self)
         if not item in os.listdir('tech'):
             self.font = pg.font.Font(None, text_size)
             self.item = self.font.render(item, True, color)
@@ -31,7 +33,7 @@ class Blitter:
                     self.button[i] += self.button[i - 2]
 
     def update(self):
-        if type(self.click) is not int:
+        if type(self.click) is not int and self.show_hide:
             if pg.mouse.get_pressed()[0]:
                 bt = self.button
                 mouse = pg.mouse.get_pos()

@@ -3,7 +3,7 @@ from player import Player
 from voxel_render import VoxelRender
 from poster import Poster
 from camers import Cam
-from blitter import Blitter
+from battery import Battery
 
 
 class App:
@@ -26,10 +26,12 @@ class App:
         self.voxel_render = VoxelRender(self)
         self.voxel_render.changes('fnaf', (0, 0, 0), (255, 0, 0))
         self.cam = Cam(self)
+        self.battery = Battery(self)
         Poster(self, 30, 25, 'x', 'matrix')
         Poster(self, 20, 900, 'y', 'fnaf_poster')
 
     def update(self):
+        self.battery.update()
         self.player.update_god()
         self.voxel_render.update()
         [i.update() for i in self.blitter]

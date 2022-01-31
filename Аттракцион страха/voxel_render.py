@@ -111,12 +111,12 @@ class VoxelRender:
         self.delta_angle = self.fov / self.num_rays * 2
         self.ray_distance = 1200
         self.scale_height = 920
-        self.screen_array = np.full((800, 450, 3), (0, 0, 0))
+        self.screen_array = np.full((1000, 450, 3), (0, 0, 0))
 
     def update(self):
         x, y, z, images = self.app.posters
         self.screen_array = ray_casting(self.screen_array, self.player.pos, self.player.angle,
-                                        self.player.height, self.player.pitch, 800,
+                                        self.player.height, self.player.pitch, 1000,
                                         450, self.delta_angle, self.ray_distance,
                                         self.h_fov, self.scale_height, posters_image,
                                         posters_name, x, y, z, images)

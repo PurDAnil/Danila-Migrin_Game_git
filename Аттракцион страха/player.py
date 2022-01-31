@@ -70,7 +70,7 @@ class Player:
                 self.height = 40
 
         if pressed_key[pg.K_g]:
-            print(self.pitch, self.pos, self.height, self.angle)
+            print([self.pitch, self.pos, self.height, self.angle])
 
         if pressed_key[pg.K_k]:
             self.camera = 0
