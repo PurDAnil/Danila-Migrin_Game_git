@@ -34,6 +34,7 @@ class App:
         self.battery.update()
         self.player.update_god()
         self.voxel_render.update()
+        self.cam.update()
         [i.update() for i in self.blitter]
 
     def draw(self):
