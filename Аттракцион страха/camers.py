@@ -45,7 +45,7 @@ class Cam:
         self.app.player.pitch, self.app.player.pos, self.app.player.height, self.app.player.angle = self.cameras[n]
         if n == 0:
             self.zamedl = 0
-            [i.hide() for i in self.plansh]
+            # [i.hide() for i in self.plansh]
             if self.app.player.camera:
                 self.app.player.camera = 0
             else:
@@ -60,13 +60,14 @@ class Cam:
         self.zamedl += 1
         if self.zamedl == 3:
             [i.show() for i in self.plansh]
+        [i.update() for i in self.door_but]
+        [i.update() for i in self.all_blit]
+        [i.update() for i in self.plansh]
 
     def draw(self):
-        [i.show() for i in self.door_but]
-        [i.hide() for i in self.all_blit]
+        [i.draw() for i in self.plansh]
         if self.app.player.camera:
-            [i.show() for i in self.all_blit]
-            [i.hide() for i in self.door_but]
+            [i.draw() for i in self.all_blit]
             self.app.player.angle += self.app.player.angle_vel * self.cam_cof / 15
             self.real_angle += self.app.player.angle_vel * self.cam_cof / 15
             self.cam_angle += self.cam_cof / 4
@@ -79,6 +80,8 @@ class Cam:
                 self.app.screen.fill((rand, rand, rand),
                                      (random.random() * w + (self.app.width - w) // 2,
                                       random.random() * self.app.height, 3, 2))
+        else:
+            [i.draw() for i in self.door_but]
 
     def left_click(self):
         if self.app.doors[0]:

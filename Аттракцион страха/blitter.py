@@ -12,7 +12,6 @@ class Blitter:
         self.app = app
         self.pos = pos
         self.size = size
-        self.app.blitter.append(self)
         if type(cp) is list:
             cp.append(self)
         if not item in os.listdir('tech'):
@@ -57,9 +56,6 @@ class Blitter:
             self.item = self.font.render(new_item, True, color)
         else:
             self.item = pg.transform.scale(pg.image.load('tech/' + new_item), self.size).convert_alpha()
-
-    def __del__(self):
-        del self.app.blitter[self.app.blitter.index(self)]
 
     def show(self):
         self.show_hide = True

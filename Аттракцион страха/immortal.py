@@ -7,10 +7,10 @@ from battery import Battery
 
 
 class App:
-    def __init__(self):
+    def __init__(self, night):
         self.test = 0
         if self.test:
-            h = 450
+            h = 250
             w = 800
         else:
             pg.display.set_mode()
@@ -35,12 +35,10 @@ class App:
         self.player.update()
         self.voxel_render.update()
         self.cam.update()
-        [i.update() for i in self.blitter]
 
     def draw(self):
         self.voxel_render.draw()
         self.cam.draw()
-        [i.draw() for i in self.blitter]
         pg.display.flip()
 
     def run(self):
@@ -61,5 +59,5 @@ class App:
 
 
 if __name__ == '__main__':
-    app = App()
+    app = App(1)
     app.run()
