@@ -17,6 +17,7 @@ class App:
             h = pg.display.Info().current_h
             w = pg.display.Info().current_w
         pg.display.set_icon(pg.image.load('tech/icon.jpg'))
+        self.doors = [0, 0]
         self.blitter = []
         self.posters = [[], [], [], []]
         self.res = self.width, self.height = (w, h)
@@ -24,7 +25,6 @@ class App:
         self.clock = pg.time.Clock()
         self.player = Player(self)
         self.voxel_render = VoxelRender(self)
-        self.voxel_render.changes('fnaf', (0, 0, 0), (255, 0, 0))
         self.cam = Cam(self)
         self.battery = Battery(self)
         Poster(self, 30, 25, 'x', 'matrix')
@@ -32,7 +32,7 @@ class App:
 
     def update(self):
         self.battery.update()
-        self.player.update_god()
+        self.player.update()
         self.voxel_render.update()
         self.cam.update()
         [i.update() for i in self.blitter]

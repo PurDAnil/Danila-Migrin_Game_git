@@ -1,15 +1,16 @@
 import random
 from blitter import Blitter
 
-cameras = [[240.0, [594.04, 1372.38], 50, 4.66], [-80, [723.7, 548.38], 270, 3.9], [-200, [663.27, 536.0], 330, 5.2],
-           [40, [710.82, 572.46], 230, 13.54], [0, [320.06, 563.29], 220, 14.51], [-200, [669.94, 560.96], 270, 21.21]]
-
 
 class Cam:
     # self.pitch, self.pos, self.height, self.angle
     # -80.0 [723.69674572 548.38077551] 270
     # -200.0 [663.26748272 536.00193018] 330 5.233333333333362
     def __init__(self, app):
+        self.cameras = [[240.0, [594.04, 1372.38], 50, 4.66], [-80, [723.7, 548.38], 270, 3.9],
+                        [-200, [663.27, 536.0], 330, 5.2],
+                        [40, [710.82, 572.46], 230, 13.54], [0, [320.06, 563.29], 220, 14.51],
+                        [-200, [669.94, 560.96], 270, 21.21]]
         self.zamedl = 0
         self.app = app
         self.cam = 1
@@ -21,6 +22,7 @@ class Cam:
         self.cam_text = Blitter(self.app, 'CAM #1', [80, 60], [80, 80], text_size=40, cp=self.all_blit)
         self.cam_map = Blitter(self.app, 'map.png', [85, 200], [150, 200], cp=self.all_blit)
         self.plansh = []
+        self.door_but = []
         Blitter(self.app, 'button.png', [230, 400], [300, 30], cp=self.plansh, click=self.change_cam, ed=0)
         Blitter(self.app, 'down.png', [330, 400], [100, 30], cp=self.plansh)
 
@@ -34,10 +36,13 @@ class Cam:
         Blitter(self.app, 'Cam #4', [93, 281], [150, 200], cp=self.all_blit, text_size=15)
         Blitter(self.app, 'button.png', [140, 281], [38, 10], cp=self.all_blit, click=self.change_cam, ed=5)
         Blitter(self.app, 'Cam #5', [140, 281], [150, 200], cp=self.all_blit, text_size=15)
-        self.change_cam(1)
+
+        Blitter(self.app, 'left_off.png', [-20, 140], [80, 160], cp=self.door_but, click=self.left_click)
+        Blitter(self.app, 'right_off.png', [740, 140], [80, 160], cp=self.door_but, click=self.right_click)
+        self.change_cam(0)
 
     def change_cam(self, n):
-        self.app.player.pitch, self.app.player.pos, self.app.player.height, self.app.player.angle = cameras[n]
+        self.app.player.pitch, self.app.player.pos, self.app.player.height, self.app.player.angle = self.cameras[n]
         if n == 0:
             self.zamedl = 0
             [i.hide() for i in self.plansh]
@@ -57,9 +62,11 @@ class Cam:
             [i.show() for i in self.plansh]
 
     def draw(self):
+        [i.show() for i in self.door_but]
         [i.hide() for i in self.all_blit]
         if self.app.player.camera:
             [i.show() for i in self.all_blit]
+            [i.hide() for i in self.door_but]
             self.app.player.angle += self.app.player.angle_vel * self.cam_cof / 15
             self.real_angle += self.app.player.angle_vel * self.cam_cof / 15
             self.cam_angle += self.cam_cof / 4
@@ -67,8 +74,37 @@ class Cam:
                 self.cam_cof *= -1
 
             w = self.app.height / 450 * 800
-            for i in range(2500):
+            for i in range(2000):
                 rand = random.random() * 100
                 self.app.screen.fill((rand, rand, rand),
                                      (random.random() * w + (self.app.width - w) // 2,
                                       random.random() * self.app.height, 3, 2))
+
+    def left_click(self):
+        if self.app.doors[0]:
+            self.door_but[0].change('left_off.png')
+            self.app.doors[0] = 0
+        else:
+            self.door_but[0].change('left_on.png')
+            self.app.doors[0] = 1
+        self.doors_update()
+
+    def right_click(self):
+        if self.app.doors[1]:
+            self.door_but[1].change('right_off.png')
+            self.app.doors[1] = 0
+        else:
+            self.door_but[1].change('right_on.png')
+            self.app.doors[1] = 1
+        self.doors_update()
+
+    def doors_update(self):
+        ld, rd = self.app.doors
+        if ld and rd:
+            self.app.voxel_render.change('block')
+        elif ld and not rd:
+            self.app.voxel_render.change('left')
+        elif not ld and rd:
+            self.app.voxel_render.change('right')
+        else:
+            self.app.voxel_render.change('openm')

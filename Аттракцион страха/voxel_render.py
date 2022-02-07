@@ -4,17 +4,24 @@ import numpy as np
 import math
 import os
 
-height_map_img = pg.image.load('maps/test/height_map.jpg')
-height_map = pg.surfarray.array3d(height_map_img)
-
-color_map_img = pg.image.load('maps/test/color_map.jpg')
+color_map_img = pg.image.load('maps/fnaf/color_map.jpg')
 color_map = pg.surfarray.array3d(color_map_img)
 
-map_height = len(height_map[0])
-map_width = len(height_map)
-filling_color = (0, 0, 0)
+height_map_img1 = pg.image.load('maps/fnaf/height_map.jpg')
+openm = pg.surfarray.array3d(height_map_img1)
+
+height_map_img2 = pg.image.load('maps/fnaf_left/height_map.jpg')
+left = pg.surfarray.array3d(height_map_img2)
+
+height_map_img3 = pg.image.load('maps/fnaf_right/height_map.jpg')
+right = pg.surfarray.array3d(height_map_img3)
+
+height_map_img4 = pg.image.load('maps/fnaf_close/height_map.jpg')
+block = pg.surfarray.array3d(height_map_img4)
+
+map_height = len(openm[0])
+map_width = len(openm)
 bright = 100
-roof = False
 
 posters_name = []
 posters_image = []
@@ -27,8 +34,8 @@ for image in os.listdir('posters'):
 @njit(fastmath=True)
 def ray_casting(screen_array, player_pos, player_angle, player_height, player_pitch,
                 screen_width, screen_height, delta_angle, ray_distance, h_fov, scale_height,
-                all_posters, all_posters_names, p_x, p_y, p_z, p_im):
-    screen_array[:] = np.array(filling_color)
+                all_posters, all_posters_names, p_x, p_y, p_z, p_im, height_map):
+    screen_array[:] = np.array((0, 0, 0))
     y_buffer = np.full(screen_width, screen_height)
 
     ray_angle = player_angle - h_fov
@@ -71,7 +78,7 @@ def ray_casting(screen_array, player_pos, player_angle, player_height, player_pi
                                 vp_z = p_z[el]
                                 vp_im = p_im[el]
                                 if vp_z == 'x' and x in range(vp_x, vp_x + 50) and y in range(vp_y - 5, vp_y + 5):
-                                    if 300 < int(height_map[x, y][0] - (screen_y - player_pitch) * (depth / 500))\
+                                    if 300 < int(height_map[x, y][0] - (screen_y - player_pitch) * (depth / 500)) \
                                             + player_height * 2 < 600:
                                         key = all_posters_names.index(vp_im)
                                         certain_poster = all_posters[key]
@@ -79,7 +86,7 @@ def ray_casting(screen_array, player_pos, player_angle, player_height, player_pi
                                                                                           * (depth / 500))
                                                                                          - player_height * 2 - 17)]
                                 elif vp_z == 'y' and y in range(vp_y, vp_y + 50) and x in range(vp_x - 5, vp_x + 5):
-                                    if 300 < int(height_map[x, y][0] - (screen_y - player_pitch) * (depth / 500))\
+                                    if 300 < int(height_map[x, y][0] - (screen_y - player_pitch) * (depth / 500)) \
                                             + player_height * 2 < 600:
                                         key = all_posters_names.index(vp_im)
                                         certain_poster = all_posters[key]
@@ -103,6 +110,8 @@ def ray_casting(screen_array, player_pos, player_angle, player_height, player_pi
 
 class VoxelRender:
     def __init__(self, app):
+        self.door = 'openm'
+        self.height_map = openm
         self.app = app
         self.player = app.player
         self.fov = math.pi / 5
@@ -119,7 +128,7 @@ class VoxelRender:
                                         self.player.height, self.player.pitch, 1000,
                                         450, self.delta_angle, self.ray_distance,
                                         self.h_fov, self.scale_height, posters_image,
-                                        posters_name, x, y, z, images)
+                                        posters_name, x, y, z, images, self.height_map)
 
     def draw(self):
         screen = pg.surfarray.make_surface(self.screen_array)
@@ -131,15 +140,6 @@ class VoxelRender:
         self.app.screen.blit(screen, ((self.app.width - w) // 2, 0))
         # pg.surfarray.blit_array(self.app.screen, self.screen_array)
 
-    def changes(self, map, fill_color=filling_color, roof_color=False):
-        global height_map, color_map, map_height, map_width, filling_color, roof
-        height_map_img1 = pg.image.load(f'maps/{map}/height_map.jpg')
-        height_map = pg.surfarray.array3d(height_map_img1)
-
-        color_map_img1 = pg.image.load(f'maps/{map}/color_map.jpg')
-        color_map = pg.surfarray.array3d(color_map_img1)
-
-        map_height = len(height_map[0])
-        map_width = len(height_map)
-        filling_color = fill_color
-        roof = roof_color
+    def change(self, map):
+        self.door = map
+        self.height_map = globals()[map]

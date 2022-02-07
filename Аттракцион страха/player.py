@@ -1,6 +1,7 @@
 import pygame as pg
 import numpy as np
 import math
+from voxel_render import VoxelRender
 
 
 class Player:
@@ -78,5 +79,23 @@ class Player:
         if pressed_key[pg.K_l]:
             self.camera = 1
 
+        if pressed_key[pg.K_1]:
+            self.app.voxel_render.change('openm')
+
+        if pressed_key[pg.K_2]:
+            self.app.voxel_render.change('left')
+
+        if pressed_key[pg.K_3]:
+            self.app.voxel_render.change('right')
+
+        if pressed_key[pg.K_4]:
+            self.app.voxel_render.change('block')
+
     def update(self):
-        pass
+        if self.camera == 0:
+            mouse = pg.mouse.get_pos()[0]
+            zona = self.app.width / 3
+            if self.angle >= 4.02 and mouse <= zona:
+                self.angle -= self.angle_vel * 3
+            if self.angle <= 5.18 and mouse >= zona * 2:
+                self.angle += self.angle_vel * 3
