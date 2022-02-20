@@ -1,5 +1,6 @@
 import random
 from blitter import Blitter
+from animatronic import Animatronic
 
 
 class Cam:
@@ -11,6 +12,7 @@ class Cam:
                         [-200, [663.27, 536.0], 330, 5.2],
                         [40, [710.82, 572.46], 230, 13.54], [0, [320.06, 563.29], 220, 14.51],
                         [-200, [669.94, 560.96], 270, 21.21]]
+        self.prov = True
         self.zamedl = 0
         self.app = app
         self.cam = 1
@@ -23,6 +25,7 @@ class Cam:
         self.cam_map = Blitter(self.app, 'map.png', [85, 200], [150, 200], cp=self.all_blit)
         self.plansh = []
         self.door_but = []
+        self.time = Blitter(self.app, '0am', [10, 10], [0, 0], text_size=55)
         Blitter(self.app, 'button.png', [230, 400], [300, 30], cp=self.plansh, click=self.change_cam, ed=0)
         Blitter(self.app, 'down.png', [330, 400], [100, 30], cp=self.plansh)
 
@@ -57,12 +60,19 @@ class Cam:
             self.cam_text.change('Cam #' + str(n))
 
     def update(self):
-        self.zamedl += 1
-        if self.zamedl == 3:
-            [i.show() for i in self.plansh]
-        [i.update() for i in self.door_but]
-        [i.update() for i in self.all_blit]
-        [i.update() for i in self.plansh]
+        if int(self.app.time // 60) != 6:
+            self.time.change(str(int(self.app.time // 60)) + 'am')
+            [i.hide() for i in self.plansh]
+            self.zamedl += 1
+            if self.zamedl >= 3 and self.app.battery.charge > 0:
+                [i.show() for i in self.plansh]
+            [i.update() for i in self.door_but]
+            [i.update() for i in self.all_blit]
+            [i.update() for i in self.plansh]
+        elif self.prov:
+            self.prov = False
+            self.time.hide()
+            self.app.anim = [Animatronic(self.app, 'over')]
 
     def draw(self):
         [i.draw() for i in self.plansh]
@@ -82,6 +92,7 @@ class Cam:
                                       random.random() * self.app.height, 3, 2))
         else:
             [i.draw() for i in self.door_but]
+        self.time.draw()
 
     def left_click(self):
         if self.app.doors[0]:

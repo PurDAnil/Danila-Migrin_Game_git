@@ -21,7 +21,7 @@ block = pg.surfarray.array3d(height_map_img4)
 
 map_height = len(openm[0])
 map_width = len(openm)
-bright = 100
+
 
 posters_name = []
 posters_image = []
@@ -34,7 +34,7 @@ for image in os.listdir('posters'):
 @njit(fastmath=True)
 def ray_casting(screen_array, player_pos, player_angle, player_height, player_pitch,
                 screen_width, screen_height, delta_angle, ray_distance, h_fov, scale_height,
-                all_posters, all_posters_names, p_x, p_y, p_z, p_im, height_map):
+                all_posters, all_posters_names, p_x, p_y, p_z, p_im, height_map, bright):
     screen_array[:] = np.array((0, 0, 0))
     y_buffer = np.full(screen_width, screen_height)
 
@@ -110,6 +110,7 @@ def ray_casting(screen_array, player_pos, player_angle, player_height, player_pi
 
 class VoxelRender:
     def __init__(self, app):
+        self.bright = 100
         self.door = 'openm'
         self.height_map = openm
         self.app = app
@@ -128,7 +129,7 @@ class VoxelRender:
                                         self.player.height, self.player.pitch, 1000,
                                         450, self.delta_angle, self.ray_distance,
                                         self.h_fov, self.scale_height, posters_image,
-                                        posters_name, x, y, z, images, self.height_map)
+                                        posters_name, x, y, z, images, self.height_map, self.bright)
 
     def draw(self):
         screen = pg.surfarray.make_surface(self.screen_array)
@@ -143,3 +144,6 @@ class VoxelRender:
     def change(self, map):
         self.door = map
         self.height_map = globals()[map]
+
+    def pover_off(self):
+        self.bright = 30

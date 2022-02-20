@@ -8,9 +8,10 @@ from animatronic import Animatronic
 
 
 class App:
-    def __init__(self, night):
+    def __init__(self, night, menu):
+        self.menu = menu
         self.night = night
-        self.time = 30
+        self.time = 0
         self.test = 0
         if self.test:
             h = 250
@@ -20,7 +21,9 @@ class App:
             h = pg.display.Info().current_h
             w = pg.display.Info().current_w
         pg.display.set_icon(pg.image.load('tech/icon.jpg'))
-        self.anim = Animatronic(self, 'bonni')
+        # self.anim = [Animatronic(self, 'bonni'), Animatronic(self, 'chika'), Animatronic(self, 'foxy'),
+                     # Animatronic(self, 'freddy'), Animatronic(self, 'echo')]
+        self.anim = [Animatronic(self, 'foxy')]
         self.doors = [0, 0]
         self.blitter = []
         self.posters = [[], [], [], []]
@@ -39,11 +42,11 @@ class App:
         self.player.update()
         self.voxel_render.update()
         self.cam.update()
-        self.anim.update()
+        [i.update() for i in self.anim]
 
     def draw(self):
         self.voxel_render.draw()
-        self.anim.draw()
+        [i.draw() for i in self.anim]
         self.cam.draw()
         pg.display.flip()
 
@@ -66,5 +69,5 @@ class App:
 
 
 if __name__ == '__main__':
-    app = App(1)
+    app = App(1, None)
     app.run()

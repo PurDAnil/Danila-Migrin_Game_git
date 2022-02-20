@@ -21,6 +21,7 @@ class Battery:
         elif self.app.player.camera:
             self.app.cam.change_cam(0)
         else:
+            self.app.voxel_render.pover_off()
             self.app.voxel_render.change('openm')
             [i.hide() for i in self.app.cam.plansh]
             [i.hide() for i in self.app.cam.door_but]

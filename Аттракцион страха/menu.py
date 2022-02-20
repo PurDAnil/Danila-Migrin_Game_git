@@ -27,10 +27,10 @@ class Menu:
         self.im = Blitter(self, 'freddy.png', [0, 0], [400, 450], cp=self.buttons)
         Blitter(self, 'Новая игра', [500, 100], [0, 0], text_size=50, cp=self.buttons, click=self.new_game)
         Blitter(self, 'Продолжить', [500, 170], [0, 0], text_size=50, cp=self.buttons, click=self.start_game)
-        night = 'Ночь ' + str(self.data['night'])
-        Blitter(self, night, [640, 200], [0, 0], text_size=25, cp=self.buttons, color=(155, 155, 155))
         Blitter(self, 'Инструкция', [500, 240], [0, 0], text_size=50, cp=self.buttons, click=self.info)
         Blitter(self, 'Выход', [700, 400], [0, 0], text_size=36, cp=self.buttons, show=True, click=self.exit_game)
+        night = 'Ночь ' + str(self.data['night'])
+        Blitter(self, night, [640, 200], [0, 0], text_size=25, cp=self.buttons, color=(155, 155, 155))
 
         Blitter(self, 'Закрывайте двери для защиты и открывайте их в безопасное время, нажимая на эти кнопки',
                 [50, 62], [0, 0], text_size=20, cp=self.information, show=False)
@@ -47,9 +47,9 @@ class Menu:
                 [10, text_x], [0, 0], text_size=40, cp=self.information, show=False)
         Blitter(self, 'помнить, что это не просто работа, а игра на выживание.',
                 [10, text_x + 25], [0, 0], text_size=40, cp=self.information, show=False)
-        Blitter(self, 'Если аниматроник доберётся до вас, закончится энергия',
+        Blitter(self, 'Если аниматроник доберётся до вас или закончится ',
                 [10, text_x + 50], [0, 0], text_size=40, cp=self.information, show=False)
-        Blitter(self, 'или вдруг музыка шкатулки оборвётся, то вам конец.',
+        Blitter(self, 'энергия,то вам конец.',
                 [10, text_x + 75], [0, 0], text_size=40, cp=self.information, show=False)
         if type(items) is dict:
             self.info()
@@ -67,11 +67,12 @@ class Menu:
                               random() * self.height, w, random() * 10))
         [i.draw() for i in self.buttons]
         [i.draw() for i in self.information]
-
         pg.display.flip()
 
     def run(self):
         pg.display.set_caption('immortal menu')
+        night = 'Ночь ' + str(self.data['night'])
+        self.buttons[5] = Blitter(self, night, [640, 200], [0, 0], text_size=25, color=(155, 155, 155))
         while self.running:
             self.screen.fill((0, 0, 0))
             self.update()
@@ -88,7 +89,7 @@ class Menu:
         night = 'Ночь ' + str(self.data['night'])
         Blitter(self, night, [240, 150], [0, 0], text_size=150).draw()
         pg.display.flip()
-        App(self.data['night']).run()
+        App(self.data['night'], self).run()
 
     def new_game(self):
         self.data['night'] = 1
