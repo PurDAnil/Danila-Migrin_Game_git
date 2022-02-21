@@ -46,6 +46,7 @@ class Cam:
 
     def change_cam(self, n):
         self.app.player.pitch, self.app.player.pos, self.app.player.height, self.app.player.angle = self.cameras[n]
+        self.app.blip.play()
         if n == 0:
             self.zamedl = 0
             # [i.hide() for i in self.plansh]
@@ -95,6 +96,7 @@ class Cam:
         self.time.draw()
 
     def left_click(self):
+        self.app.door_sound.play()
         if self.app.doors[0]:
             self.door_but[0].change('left_off.png')
             self.app.doors[0] = 0
@@ -104,6 +106,7 @@ class Cam:
         self.doors_update()
 
     def right_click(self):
+        self.app.door_sound.play()
         if self.app.doors[1]:
             self.door_but[1].change('right_off.png')
             self.app.doors[1] = 0

@@ -70,9 +70,14 @@ class Menu:
         pg.display.flip()
 
     def run(self):
+        pg.mixer.init()
+        pg.mixer.stop()
+        pg.mixer.music.stop()
         pg.display.set_caption('immortal menu')
         night = 'Ночь ' + str(self.data['night'])
         self.buttons[5] = Blitter(self, night, [640, 200], [0, 0], text_size=25, color=(155, 155, 155))
+        pg.mixer.music.load("sounds/menu.mp3")
+        pg.mixer.music.play(-1)
         while self.running:
             self.screen.fill((0, 0, 0))
             self.update()
@@ -85,10 +90,23 @@ class Menu:
         pg.quit()
 
     def start_game(self):
+        text1 = ''
         self.screen.fill((0, 0, 0))
         night = 'Ночь ' + str(self.data['night'])
         Blitter(self, night, [240, 150], [0, 0], text_size=150).draw()
+        if self.data['night'] == 1:
+            text = 'Закрывай двери, когда они близко'
+        elif self.data['night'] == 2:
+            text = 'Следи за Фокси, иначе он побежит к тебе'
+        elif self.data['night'] == 3:
+            text = 'Если Фредди прийдёт к двери, он никогда не уйдёт, '
+            text1 = 'следи за ним по камерам чтобы замедлить его движение'
+        else:
+            text = 'Выживи...'
+        Blitter(self, text, [40, 300], [0, 0], text_size=50).draw()
+        Blitter(self, text1, [0, 340], [0, 0], text_size=50).draw()
         pg.display.flip()
+        pg.mixer.music.stop()
         App(self.data['night'], self).run()
 
     def new_game(self):

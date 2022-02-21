@@ -30,7 +30,6 @@ class Animatronic:
         self.pos = start_poss[name]
         self.posible_pos = {}
         self.cords = {}
-        name = 'freddy'
         for im in os.listdir('animatronics/' + name):
             if not 'screamer' in im:
                 self.posible_pos[im.split('.')[0]] = pg.image.load('animatronics/' + name + '/' + im)
@@ -46,11 +45,12 @@ class Animatronic:
         if self.app.time > 40 - self.night * 10 and self.time <= int(self.app.time) - 1:
             self.time = int(self.app.time)
             if randrange(100) in range(round(self.cof)) or self.name == 'foxy':
-                if self.pos == self.app.cam.cam and self.app.player.camera:
+                if self.pos == self.app.cam.cam and self.app.player.camera and self.name != 'foxy':
                     self.gluc = True
 
-                if self.name is 'foxy' and self.tr == 0:
+                if self.name is 'foxy' and self.tr == 0 and self.night >= 2:
                     if self.pos < 4:
+                        self.app.foxy_song.play()
                         self.pos += 1
                         if self.pos == 4:
                             self.time = int(self.app.time) + 6
@@ -59,9 +59,12 @@ class Animatronic:
                     elif not self.app.doors[1]:
                         self.pos = 0
                     else:
-                        self.gluc = True
+                        if randrange(10) > 6:
+                            self.app.pound.play()
+                        if self.app.cam.cam == 2:
+                            self.gluc = True
                         self.pos = 1
-                        self.app.battery.charge -= randrange(3, 9)
+                        self.app.battery.charge -= randrange(5, 15)
 
                 if self.name is 'chika':
                     if self.pos == 1:
@@ -145,8 +148,12 @@ class Animatronic:
             self.app.screen.blit(surf, ((self.app.width - w) / 2, 0))
 
     def screamer(self):
-        if self.name != 'echo':
-            self.app.battery.charge = 0
+        if self.tr == 0:
+            if self.name != 'echo' and self.name != 'over':
+                self.app.battery.charge = 0
+                self.app.scream.play()
+            else:
+                self.app.echo_scream.play()
         surf = pg.surface.Surface([800, 450], pg.SRCALPHA, 32)
         try:
             surf.blit(self.screamers[self.tr_im], (0, 0))

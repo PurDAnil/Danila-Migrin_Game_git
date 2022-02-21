@@ -9,6 +9,14 @@ from animatronic import Animatronic
 
 class App:
     def __init__(self, night, menu):
+        pg.mixer.pre_init(frequency=44100, size=-16, channels=8, buffer=512, devicename=None)
+        pg.mixer.Sound("sounds/eerie-ambience-largesca.wav").play(-1)
+        self.scream = pg.mixer.Sound("sounds/screamer.wav")
+        self.foxy_song = pg.mixer.Sound("sounds/piratesong.wav")
+        self.echo_scream = pg.mixer.Sound("sounds/computer-digital.wav")
+        self.pound = pg.mixer.Sound("sounds/pound-2.wav")
+        self.blip = pg.mixer.Sound("sounds/blip3.wav")
+        self.door_sound = pg.mixer.Sound("sounds/door.wav")
         self.menu = menu
         self.night = night
         self.time = 0
@@ -21,9 +29,8 @@ class App:
             h = pg.display.Info().current_h
             w = pg.display.Info().current_w
         pg.display.set_icon(pg.image.load('tech/icon.jpg'))
-        # self.anim = [Animatronic(self, 'bonni'), Animatronic(self, 'chika'), Animatronic(self, 'foxy'),
-                     # Animatronic(self, 'freddy'), Animatronic(self, 'echo')]
-        self.anim = [Animatronic(self, 'foxy')]
+        self.anim = [Animatronic(self, 'foxy'), Animatronic(self, 'bonni'), Animatronic(self, 'chika'),
+                     Animatronic(self, 'freddy'), Animatronic(self, 'echo')]
         self.doors = [0, 0]
         self.blitter = []
         self.posters = [[], [], [], []]
